@@ -55,25 +55,35 @@ func main() {
 
 		outDir, err := dialog.Directory().Title("Output Directory").Browse()
 
-		if err != nil {
+		if err == nil {
+
+			err = converterClient.SetOutputDirectory(outDir)
+
+			if err != nil {
+				dialog.Message(err.Error()).Error()
+				os.Exit(1)
+			}
+
+			errWhileConverting := converterClient.Convert()
+
+			if errWhileConverting != nil {
+				dialog.Message(err.Error()).Error()
+				os.Exit(1)
+			} else {
+				dialog.Message("Your files have been converted! Bye :)").Info()
+				os.Exit(0)
+			}
+
+		} else {
+
 			if err != dialog.Cancelled {
 				dialog.Message(fmt.Sprintf("Error while selecting output directory: %s", err.Error())).Error()
 			} else {
 				dialog.Message("Operation Cancelled, leaving. Bye :)").Info()
 			}
+
 		}
 
-		err = converterClient.SetOutputDirectory(outDir)
-
-		if err != nil {
-			dialog.Message(err.Error()).Error()
-		}
-
-		fmt.Printf("Output Directory: %s\n", converterClient.OutputDirectory)
-		fmt.Println("Input files:")
-		for _, inputFile := range converterClient.InputFiles {
-			fmt.Println(inputFile)
-		}
 
 	}
 
