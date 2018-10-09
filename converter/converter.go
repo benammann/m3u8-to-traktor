@@ -8,7 +8,7 @@ import (
 )
 
 type Converter struct {
-	InputFiles []string
+	InputFiles      []string
 	OutputDirectory string
 }
 
